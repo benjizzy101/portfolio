@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title> VIU Web Map Application </title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.28/esri/themes/light/main.css">
+  <style>
+    html, body, #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+    #srDiv {
+      padding: 0px;
+      margin: 5px;
+      color: #080707;
+      background-color: rgba(32, 210, 201, 0.5);
+      border-radius: 0px;
+      font-size: 1.2em;
+      font-weight: bold;
+      position: absolute;
+      top: 20px;
+      left: 50px;
+      z-index: 70;
+      border: 1px solid #0b0101; 
+      display: flex;
+      justify-content: center; /* Center content horizontally */
+      align-items: center; /* Center content vertically */
+      text-align: center;
+      align-items: left;
+      height: 50px;
+      width: auto;
+    }
+
+    
+  </style>
+</head>
+<body>
+  <div id="viewDiv"></div>
+  <div id="srDiv" class="esri-widget">
+    <img src="Image/VIU-75-Logo.jpg" alt="VIU Logo" style="height: 50px; margin-right: 20px; margin-left: 10px;">
+    THE VIU CAMPUS MAP WITH ARCGIS.COM AND ARCGIS SERVER
+  </div>
+
+  <script src="https://js.arcgis.com/4.28/"></script>
+  <script>
+    require([
+      "esri/config",
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/geometry/Extent",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/ScaleBar",
+      "esri/widgets/Legend",
+      "esri/widgets/LayerList",
+      "esri/widgets/Home"
+    ], function (esriConfig, Map, MapView, Extent, FeatureLayer, ScaleBar, Legend, LayerList, Home) {
+
+      const map = new Map({
+        basemap: "streets-vector"
+      });
+
+      const initialExtent = new Extent({
+        xmin: -13800000,
+        ymin: 6301000,
+        xmax: -13799900,
+        ymax: 6302350,
+        spatialReference: 102100
+      });
+
+      const view = new MapView({
+        map: map,
+        extent: initialExtent, 
+        container: "viewDiv",
+      });
+
+      const Scalebar = new ScaleBar ({
+        view: view,
+        style: "ruler",
+        unit: "metric"
+      });
+      view.ui.add(Scalebar, "bottom-left");
+
+      view.when(function() {
+        var layerList = new LayerList({
+          view: view,
+          listItemCreatedFunction: function(event) {
+            var item = event.item;
+            if (item.title.includes("VIUMap 666586888 -")) {
+              item.title = item.title.replace("VIUMap 666586888 - ", "");
+            }
+          }
+        });
+
+        var homeWidget = new Home({
+          view: view
+        });
+        view.ui.add(homeWidget, "top-left");
+
+        view.ui.add(layerList, "bottom-right");
+      }, function(error) {
+        console.error("The view failed to load: ", error);
+      });
+
+      var ViuLayer0 = new FeatureLayer({
+        url: "https://catala.viu.ca/arcgis/rest/services/VIUMap_666586888/MapServer/0"
+      });
+
+      var roadsLayer = new FeatureLayer({
+        url: "https://catala.viu.ca/arcgis/rest/services/VIUMap_666586888/MapServer/1"
+      });
+
+      var buildingsLayer = new FeatureLayer({
+        url: "https://catala.viu.ca/arcgis/rest/services/VIUMap_666586888/MapServer/2"
+      });
+
+      map.addMany([ViuLayer0, roadsLayer, buildingsLayer]);
+
+      var legend = new Legend({
+        view: view,
+        style: "card",
+        layerInfos: [
+          { layer: ViuLayer0, title: "VIU Layer" },
+          { layer: roadsLayer, title: "Roads Layer" },
+          { layer: buildingsLayer, title: "Buildings Layer" }
+        ]
+      });
+
+      view.ui.add(legend, "top-right");
+
+      view.when(function() {
+        view.ui.add("srDiv", "manual");
+      });
+    });
+  </script>
+</body>
+</html>

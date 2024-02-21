@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Add Map</title>
+    <title>Google Maps JavaScript API v3 Example: Info Window</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <style>
+        /* Always set the map height explicitly to define the size of the div element that contains the map.*/
+        #map {
+            width: 500px;
+            height: 500px;
+            margin: 0 auto;
+        }
+
+        body {
+            text-align: center;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+    </style>
+  </head>
+  <body>
+    <h2>The Elementary and Secondary Schools in Nanaimo with the Google Maps API</h2>
+    <div id="map"></div>
+    
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsF1aJmfsIohOhpZkOdQkwvRM-v2PLeuw&callback=initMap&v=weekly"    
+      defer >
+    </script>
+
+    <script>// This example displays a marker at the center of Australia.
+    // When the user clicks the marker, an info window opens.
+    function initMap() {
+        const NDSS = { lat: 49.162685506000059, lng: -123.961025545999973 };
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 13,
+            center:  NDSS,
+            mapTypeId: "hybrid",
+            scaleControl: true,
+            scaleControlOptions: {
+                position: google.maps.ControlPosition.BOTTOM_LEFT,
+                style: google.maps.ScaleControlStyle.DEFAULT
+            }
+        });
+        
+        //Set arguments for the first school and add the first school's marker to the map: call setMap();
+        createMarker('FAIRVIEW ELEMENTARY <p><img src="Images/FAIRVIEW_ELEMENTARY.jpg" style="width:60px; height:40px;"></p>', -123.955585545999952, 49.165871512000081).setMap(map);
+        createMarker('GEORGIA AVENUE ELEMENTARY <p><img src="Images/GEORGIA_AVENUE_ELEMENTARY.png" style="width:60px; height:40px;"></p>', -123.952586541999949, 49.153468512000074).setMap(map);
+        createMarker('PAULINE HAARER ELEMENTARY <p><img src="Images/PAULINE_HAARER_ELEMENTARY.png" style="width:60px; height:40px;"></p>', -123.943225544999962, 49.168455513000026).setMap(map);
+        createMarker('CONTINUING ED SD 68 <p><img src="Images/CONTINUING_ED_SD_68.png" style="width:60px; height:40px;"></p>', -123.961025544999984, 49.160975506000057).setMap(map);
+        createMarker('MALASPINA INTERNATIONAL HIGH SCHOOL <p><img src="Images/MALASPINA_INTERNATIONAL_HIGH_SCHOOL.png" style="width:60px; height:40px;"></p>', -123.967715544999976, 49.155335505000039).setMap(map);
+        createMarker('NANAIMO CAREER & TECHNICAL CTR <p><img src="Images/NANAIMO_CAREER_TECHNICAL_CTR.png" style="width:60px; height:40px;"></p>', -123.96239400297827, 49.161287362586236).setMap(map);
+        createMarker('NANAIMO DISTRICT SECONDARY <p><img src="Images/NANAIMO_DISTRICT_SECONDARY.png" style="width:60px; height:40px;"></p>', -123.961025545999973, 49.162685506000059).setMap(map);
+       
+        const myCity = new google.maps.Circle({
+            center: new google.maps.LatLng(49.162685506000059, -123.961025545999973),
+            radius: 1500,
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.5,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.4
+        });
+        
+        myCity.setMap(map);
+    
+        // Add "Pan to Current Location" button
+        const panButton = document.createElement('button');
+        panButton.textContent = 'Pan to Current Location';
+        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(panButton);
+    
+        panButton.addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        const infoWindowContent = `Location found:<br>Latitude: ${userLocation.lat}<br>Longitude: ${userLocation.lng}`;
+                        const infoWindow = new google.maps.InfoWindow({
+                            content: infoWindowContent
+                        });
+    
+                        map.panTo(userLocation);
+                        infoWindow.setPosition(userLocation);
+                        infoWindow.open(map);
+                    },
+                    () => {
+                        alert('Error: The Geolocation service failed.');
+                    }
+                );
+            } else {
+                alert('Error: Your browser doesn\'t support geolocation.');
+            }
+        });
+    
+        // Load GeoJSON layer
+            map.data.loadGeoJson("populationG.geojson");
+            
+            // Style GeoJSON layer
+            map.data.setStyle({
+                strokeWeight: 0.2,
+                fillColor: 'orange',
+                fillOpacity: 0.2
+            });
+    }
+
+      function createMarker(school_name, point_x, point_y) {
+        // Notice that Google orders as Y,X (lat, long) rather than X,Y as ArcGIS does. 
+        // We need to compensate for this by reversing X and Y below.
+        const latlng = new google.maps.LatLng(point_y, point_x); // Coordinates of schools go in here
+        // Create marker without initialization (the hook map: map, is not defined)
+        const marker = new google.maps.Marker({position: latlng, title: school_name});
+        google.maps.event.addListener(marker, "click", 
+          function() {  
+            const infowindow = new google.maps.InfoWindow({content: school_name});
+            infowindow.open(marker.getMap(), marker);
+          } 
+            );
+            return marker; // Returning the marker from the function
+        } 
+      </script>
+  </body>
+</html>

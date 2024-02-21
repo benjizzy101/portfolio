@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create an ArcGIS.com 2D Mash-up</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="https://js.arcgis.com/4.28/esri/css/main.css">
+    <style>
+        html, body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* This will center the child elements horizontally */
+            text-align: center; /* This will center the text inside the title */
+            margin: auto;
+        }
+
+        #viewDiv {
+            width: 900px; /* Fixed width */
+            height: 600px; /* Fixed height */
+            border: 1px solid #000;
+        }
+         
+        .center {
+            text-align: center;
+            color: rgb(217, 217, 235);
+            background-color: rgb(4, 37, 67);
+            margin-bottom: 0px;
+            padding: 0px;
+            width: 100%;
+            box-sizing: border-box;
+        }     
+  </style>
+
+    <script src="https://js.arcgis.com/4.28/"></script>
+    <script>
+        require([
+    "esri/Map",
+    "esri/views/MapView",
+    "esri/Graphic",
+    "esri/geometry/Point",
+    "esri/symbols/PictureMarkerSymbol",
+    "esri/widgets/Locate"
+    
+    ], function(Map, MapView, Graphic, Point, PictureMarkerSymbol, Locate) {
+    
+    var initMap = new Map({ basemap: "streets-vector" });
+
+    var view = new MapView({
+        container: "viewDiv",
+        map: initMap,
+        extent: {
+            xmin: -13864000,
+            ymin: 6258000,
+            xmax: -13767000,
+            ymax: 6336000,
+            spatialReference: 102100
+        }
+    });
+
+    var pictureSymbol = new PictureMarkerSymbol({
+        url: "Image/Goschool.png",
+        width: "30px",
+        height: "30px"
+    });
+
+    var infoTemplate = ({
+        title:"{Name}",
+        content: [{
+        type: "fields",
+        fieldInfos: [{
+            fieldName: "Name"
+        }, {
+            fieldName: "Phone"
+        }, {
+            fieldName: "URL"
+        }]
+        }]
+    });
+
+    function simpleMarker(simpleX, simpleY, simpleName, simplePhone, simpleUrl) {
+        var simplePoint = new Point({
+            x: simpleX,
+            y: simpleY,
+            spatialReference: { wkid: 102100 }
+            });
+            
+    // Add the symbol and geometry to it
+        var addMarker = new Graphic({
+            symbol: pictureSymbol,
+            geometry: simplePoint,
+            attributes: {Name: simpleName, 
+            Phone: simplePhone, URL: simpleUrl},
+            popupTemplate: infoTemplate,
+        });
+
+
+                    // Add the symbol to the view's graphics layer
+                    view.graphics.add(addMarker);
+            }
+            
+            // simpleMarker(-13798269.7982, 6300212.72922, "JOHN BARSBY COMMUNITY SCHOOL", "250-753-8211", "<a target='_blank' href=http://jb.schools.sd68.bc.ca/> Resort's URL </a>");
+            simpleMarker(-13798672.664, 6303053.3287, "FAIRVIEW ELEMENTARY", "250-753-8211", "<a target='_blank' href=http://jb.schools.sd68.bc.ca/> Resort's URL </a>");
+            simpleMarker(-13798338.8164, 6300942.02243, "GEORGIA AVENUE ELEMENTARY", "250-753-8211", "<a target='_blank' href=http://jb.schools.sd68.bc.ca/> Resort's URL </a>");
+            simpleMarker(-13797296.7549, 6303493.25809, "PAULINE HAARER ELEMENTARY", "250-753-8211", "<a target='_blank' href=http://jb.schools.sd68.bc.ca/> Resort's URL </a>");
+            simpleMarker(-13800022.9693, 6301259.79845, "MALASPINA INTERNATIONAL HIGH SCHOOL", "250-753-8211", "<a target='_blank' href=http://jb.schools.sd68.bc.ca/> Resort's URL </a>");
+            simpleMarker(-13799278.242, 6302510.93903, "NANAIMO CAREER & TECHNICAL CTR", "250-753-8211", "<a target='_blank' href=http://jb.schools.sd68.bc.ca/> Resort's URL </a>");
+            simpleMarker(-13799278.2419, 6302219.8408, "CONTINUING ED SD 68", "250-753-8211", "<a target='_blank' href=http://jb.schools.sd68.bc.ca/> Resort's URL </a>");
+            simpleMarker(-13799288.242, 6302510.93923, "NANAIMO DISTRICT SECONDARY", "250-753-8211", "<a target='_blank' href=http://jb.schools.sd68.bc.ca/> Resort's URL </a>");
+
+   
+        var locateWidget = new Locate({
+            view: view, // Assigns the view from above
+            rotationEnabled: false, // Whether or not to show the heading direction
+            goToOverride: function(view, options) {
+            options.target.scale = 1500;  // Override the default scale
+            return view.goTo(options.target);
+        }
+  });
+
+        view.ui.add(locateWidget, {
+        position: "top-left", // Position on the view
+        index: 2 // The z-index of the widget, defining the order of the widgets
+  });
+
+});    
+
+    </script>
+
+</head>
+<body>
+    <div class="content-container">
+        <div class="center"><h2>Nanaimo Schools: ArcGIS Maps SDK for JavaScript</h2></div>
+        <div id="viewDiv"></div>
+    </div>
+</body>
+
+</html>

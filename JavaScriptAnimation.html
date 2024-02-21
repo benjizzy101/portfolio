@@ -1,0 +1,64 @@
+<HTML>
+    <HEAD>
+        <SCRIPT>
+            var img0 = new Image( 856, 616 );
+            img0.src = "images/JanJ.jpg";
+    
+            var img1 = new Image( 856, 616 );
+            img1.src = "images/FebJ.jpg";
+    
+            var img2 = new Image( 856, 616 );
+            img2.src = "images/MarchJ.jpg";
+
+            var img3 = new Image( 856, 616 );
+            img3.src = "images/AprilJ.jpg";
+
+            var img4 = new Image( 856, 616 );
+            img4.src = "images/MayJ.jpg";
+
+            var img5 = new Image( 856, 616 );
+            img5.src = "images/JuneJ.jpg";
+
+            var img6 = new Image( 856, 616 );
+            img6.src = "images/JulyJ.jpg";
+
+            var img7 = new Image( 856, 616 );
+            img7.src = "images/AugustJ.jpg";
+
+            var img8 = new Image( 856, 616 );
+            img8.src = "images/SeptemberJ.jpg";
+
+            var img9 = new Image( 856, 616 );
+            img9.src = "images/OctoberJ.jpg";
+
+            var img10 = new Image( 856, 616 );
+            img10.src = "images/NovemberJ.jpg";
+
+            var img11 = new Image( 856, 616 );
+            img11.src = "images/DecemberJ.jpg";
+    
+            var i = 0;
+            var animation = true;
+            var nbImg = 12; // change to the number of different images you have
+            
+            function animate() {
+                if (animation) {
+                    document.images[0].src = eval("img" + i ).src;
+                }
+                i++;
+                if (i == nbImg) i=0; 
+                junk = setTimeout("animate();", 500); // in milliseconds
+            }            
+        </SCRIPT>
+    </HEAD>
+    <BODY onLoad="animate();">
+        
+	    <form>
+            <!-- Use the animation variable to start and stop the animation -->
+            <input type="button" onClick="animation = true;" value="Start">
+            <input type="button" onClick="animation = false;" value="Stop">
+	    </form>
+
+        <IMG src="" width=856 height=616>
+    </BODY>
+</HTML>
